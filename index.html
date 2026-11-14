@@ -1,218 +1,207 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CyberPath Academy — تعلّم، تدرّب، احمِ</title>
-<style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:#050816;color:#eef2ff}
-a{color:#7dd3fc}header{position:sticky;top:0;background:rgba(5,8,22,.95);padding:12px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #263}
-.logo{font-weight:900;font-size:20px}.logo span{color:#a78bfa}
-button,.btn{background:#7c3aed;color:#fff;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700}
-button.sec{background:#1e293b}.btn{display:inline-block;text-decoration:none}
-main{max-width:980px;margin:auto;padding:16px}
-.card{background:#0f172a;border:1px solid #2a3555;border-radius:16px;padding:16px;margin:12px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
-input,select,textarea{width:100%;padding:11px;border-radius:10px;border:1px solid #334155;background:#020617;color:#fff;margin:6px 0}
-.badge{display:inline-block;background:#1e1b4b;color:#c4b5fd;padding:4px 10px;border-radius:20px;font-size:12px;margin:2px}
-.hidden{display:none!important}.pill{background:#111827;padding:8px 12px;border-radius:20px;border:1px solid #333}
-.top{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.hero{background:linear-gradient(135deg,#4c1d95,#1d4ed8,#0ea5e9);border-radius:20px;padding:28px 20px}
-h1{font-size:32px;line-height:1.2;margin:8px 0}.muted{color:#cbd5e1}
-.illus{font-size:64px;text-align:center;padding:14px;background:linear-gradient(135deg,#1e1b4b,#0e7490);border-radius:14px;margin:10px 0}
-.diagram{background:#020617;border:1px dashed #64748b;border-radius:12px;padding:12px;margin:10px 0;font-family:monospace;white-space:pre-wrap;text-align:center;line-height:1.7}
-.lesson-img{width:100%;border-radius:14px;display:block}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;display:flex;align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto}
-.modal-card{background:#0f172a;border:2px solid #a78bfa;border-radius:18px;padding:18px;max-width:720px;width:100%;margin-top:20px;box-shadow:0 20px 60px rgba(0,0,0,.6);color:#eef2ff}
-.closebtn{float:left;background:#334155}
-.lab{background:#020617;border:1px solid #334155;border-radius:12px;padding:12px;font-family:monospace;white-space:pre-wrap;min-height:120px}
-.msg{padding:10px;border-radius:10px;margin:6px 0}.me{background:#312e81}.ai{background:#0f766e}
-.ok{color:#4ade80}.warn{background:#fef3c7;color:#92400e;padding:10px;border-radius:10px}
-table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #334155;padding:8px;text-align:start}
-@media(max-width:600px){h1{font-size:26px}}
-</style>
-</head>
-<body>
-<header>
-<div class="logo">CyberPath <span>Academy</span></div>
-<div class="top">
-<button onclick="go('home')" data-t="home">الرئيسية</button>
-<button onclick="go('courses')" data-t="courses">الدورات</button>
-<button onclick="go('labs')" data-t="labs">المختبرات</button>
-<button onclick="go('aitutor')" data-t="aitutor">المدرّس الذكي</button>
-<button onclick="go('dash')" data-t="dash">لوحة الطالب</button>
-<button onclick="go('plans')" data-t="plans">الاشتراكات</button>
-<button onclick="go('admin')" data-t="admin">الإدارة</button>
-</div>
-<div style="margin-inline-start:auto;display:flex;gap:6px">
-<button class="sec" onclick="setLang('ar')">العربية</button>
-<button class="sec" onclick="setLang('en')">English</button>
-<button onclick="go('login')">👤 <span id="userLabel">دخول</span></button>
-</div>
-</header>
-<main>
-<div id="home" class="page">
-<div class="hero">
-<span class="badge">🔒 منصة تعليمية دفاعية — تدريب آمن فقط</span>
-<h1 id="heroTitle">تعلم الأمن السيبراني من الصفر حتى الاحتراف</h1>
-<p class="muted" id="heroSub">تعلّم، تدرّب، احمِ. مسارات منظمة + مختبرات محاكاة + اختبارات + مدرّس ذكي.</p>
-<button onclick="go('courses')">ابدأ التعلم 🚀</button>
-<button class="sec" onclick="go('labs')">جرّب المختبر</button>
-<p class="muted" style="font-size:13px">نسخة أوفلاين v2 — دروس موسّعة + صورة توضيحية لكل درس. بياناتك محفوظة في هذا المتصفح فقط.</p>
-</div>
-<div class="grid">
-<div class="card"><h3>🎯 XP: <span id="xp1">0</span></h3><p>أكمل درساً أو اختباراً أو مختبراً لتجمع نقاطاً.</p><div style="background:#1e293b;border-radius:20px;height:14px;overflow:hidden"><div id="progBar" style="height:14px;background:#a78bfa;width:0%"></div></div><p><span id="progTxt">0%</span> من المسار</p></div>
-<div class="card"><h3>📚 8 مستويات</h3><p>من أساسيات الكمبيوتر والشبكات إلى Red Team و Blue Team والسحابة.</p></div>
-<div class="card"><h3>🧪 مختبرات محاكاة</h3><p>Linux وشبكات و Python و CTF — بدون أي هجوم على أنظمة حقيقية.</p></div>
-</div>
-<div class="card"><h3>⭐ لماذا CyberPath؟</h3><p>• منهج تدريجي لا يسمح بالقفز قبل فهم الأساسيات<br>• اختبار بعد كل وحدة مع تصحيح فوري<br>• شهادة عند إكمال دورة 100%<br>• عربي + إنجليزي</p></div>
-<div class="card"><h3>⚠️ تنبيه أخلاقي</h3><p>كل التدريب هنا دفاعي وتعليمي في بيئة محاكاة. لا تنفّذ أي اختبار على أنظمة أو مواقع لا تملكها.</p></div>
-</div>
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, GraduationCap, Layers, MessageSquareQuote, Star, Users } from "lucide-react";
+import heroImg from "@/assets/hero-shield.jpg";
+import { Button } from "@/components/ui/button";
+import { catalogQuery, homeQuery } from "@/lib/queries";
+import { levelKey, useLang, type DictKey } from "@/lib/i18n";
+import { LEVELS } from "@/lib/access";
+import { useMembership } from "@/lib/auth";
+import { CourseCard } from "@/components/site/course-card";
+import { PricingCards } from "@/components/site/pricing-cards";
+import { EmptyState } from "@/components/site/states";
+import { LEVEL_TEXT } from "@/components/site/level-badge";
+import { ReviewForm } from "@/components/site/review-form";
 
-<div id="courses" class="page hidden">
-<h2>📚 الدورات والمسارات</h2>
-<p class="muted">اختر مستوى، افتح درساً، أجب عن الاختبار، وستُحفظ نتيجتك.</p>
-<div id="courseList"></div>
-</div>
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Cyber Academy — تعلّم الأمن السيبراني من الصفر حتى الاحتراف" },
+      { name: "description", content: "28 دورة في الأمن السيبراني بالعربية والإنجليزية: شروحات، أوامر، مختبرات آمنة واختبارات. ابدأ مجاناً." },
+      { property: "og:title", content: "Cyber Academy — Learn cybersecurity from zero" },
+      { property: "og:description", content: "Beginner to advanced cybersecurity courses in Arabic and English with labs and quizzes." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  loader: ({ context }) =>
+    Promise.all([context.queryClient.ensureQueryData(catalogQuery()), context.queryClient.ensureQueryData(homeQuery())]),
+  component: Home,
+});
 
-<div id="labs" class="page hidden">
-<h2>🧪 المختبرات العملية — محاكاة</h2>
-<div class="warn">مختبرات محاكاة آمنة. لا يتم تنفيذ أي أمر على جهازك أو على أي نظام حقيقي.</div>
-<div class="card"><h3>1) مختبر Linux</h3><p>جرّب: <b>help</b> ، <b>pwd</b> ، <b>whoami</b> ، <b>ls</b> ، <b>cat notes.txt</b> ، <b>echo hello</b></p>
-<div class="lab" id="termOut">cyberpath@lab:~$ اكتب أمراً ثم Enter
-</div><input id="termIn" placeholder="اكتب أمراً مثل: ls" onkeydown="if(event.key==='Enter')runTerm()"><button onclick="runTerm()">تشغيل</button></div>
-<div class="card"><h3>2) مختبر الشبكات</h3><p>فحص تجريبي لمنافذ تعليمية فقط.</p><input id="hostIn" value="demo.lab.local"><button onclick="netLab()">افحص المنافذ</button><div class="lab" id="netOut">بانتظار الفحص...</div></div>
-<div class="card"><h3>3) مختبر Python</h3><p>اكتب: <b>print("hello")</b> أو <b>2+3</b></p><input id="pyIn" value='print("Hello CyberPath")'><button onclick="pyLab()">تشغيل</button><div class="lab" id="pyOut"></div></div>
-<div class="card"><h3>4) تحدي CTF للمبتدئين</h3><p>ما هو البروتوكول الذي يحمي تصفح الويب؟ تلميح: يبدأ بحرف H وينتهي بـ S.</p><input id="ctfIn" placeholder="اكتب إجابتك"><button onclick="ctf()">تحقق</button><p id="ctfOut"></p></div>
-</div>
-
-<div id="aitutor" class="page hidden">
-<h2>🤖 المدرّس الذكي — وضع تجريبي محلي</h2><p class="muted">يساعدك على الفهم ويعطي تلميحات، ولا يعطي حلول هجومية. الربط بـ API حقيقي يتم في الإنتاج عبر الخادم فقط.</p>
-<div class="card"><div id="chatBox" style="max-height:320px;overflow:auto"><div class="msg ai">أهلاً! اسألني مثلاً: ما هو التشفير؟ أو: اشرح SQL Injection دفاعياً. أو: ما الدرس التالي؟</div></div>
-<input id="chatIn" placeholder="اسأل عن أي مفهوم..." onkeydown="if(event.key==='Enter')askAI()"><button onclick="askAI()">إرسال</button></div>
-</div>
-
-<div id="dash" class="page hidden">
-<h2>👋 لوحة الطالب</h2><div class="card"><p>مرحباً <b id="dashName">ضيف</b></p><p>الخطة: <b id="dashPlan">FREE</b> | XP: <b id="dashXp">0</b> | دروس مكتملة: <b id="dashDone">0</b></p><p>الدرس التالي المقترح: <b id="nextLesson">المستوى 1 — أساسيات الكمبيوتر</b></p><button onclick="go('courses')">متابعة التعلم</button> <button class="sec" onclick="makeCert()">🎓 إنشاء شهادتي</button></div>
-<div class="card"><h3>🎓 شهادتي</h3><div id="certBox" class="muted">أكمل 3 دروس على الأقل ثم اضغط إنشاء شهادتي.</div></div>
-<div class="card"><h3>🏆 لوحة الترتيب</h3><table><tr><th>الطالب</th><th>XP</th></tr><tr><td>أنت</td><td id="rankXp">0</td></tr><tr><td>سارة (تجريبي)</td><td>850</td></tr><tr><td>عمر (تجريبي)</td><td>620</td></tr></table></div>
-</div>
-
-<div id="plans" class="page hidden">
-<h2>💳 الاشتراكات</h2><div class="warn">وضع تجريبي أوفلاين — لا يتم خصم أي مبلغ حقيقي. الدفع الحقيقي يتطلب Stripe عبر الخادم في الإنتاج.</div>
-<div class="grid">
-<div class="card"><h3>FREE</h3><h2>0€</h2><p>دروس تعريفية + اختبارات تجريبية</p><button onclick="setPlan('FREE')">اختيار FREE</button></div>
-<div class="card" style="border-color:#a78bfa"><h3>PREMIUM ⭐</h3><h2>4.99€ / شهرياً</h2><p>كل الدورات + مختبرات + مدرّس ذكي بحدود + شهادات</p><button onclick="setPlan('PREMIUM')">اختيار PREMIUM</button></div>
-<div class="card"><h3>PRO</h3><h2>9.99€ / شهرياً</h2><p>كل مزايا PREMIUM + مختبرات أكثر + مسارات Red/Blue Team</p><button onclick="setPlan('PRO')">اختيار PRO</button></div>
-</div>
-<p>الخطة الحالية: <b id="planNow">FREE</b></p>
-</div>
-
-<div id="login" class="page hidden">
-<h2>👤 حسابي</h2><div class="card">
-<input id="nameIn" placeholder="اسمك (مثال: آدم)">
-<input id="emailIn" placeholder="بريدك (مثال: adam@test.com)">
-<input id="passIn" type="password" placeholder="كلمة مرور">
-<button onclick="saveUser()">إنشاء حساب / دخول</button>
-<p class="muted">حساب المدير التجريبي: admin@cyberpath.academy — كلمة المرور: Admin123!</p>
-<p id="loginMsg" class="ok"></p></div>
-</div>
-
-<div id="admin" class="page hidden">
-<h2>🛡️ لوحة الإدارة</h2><div class="card"><p>هذه نسخة أوفلاين: الإدارة تعرض بيانات هذا الجهاز فقط.</p><p>المستخدمون المسجلون: <b id="adminUsers">1</b></p><p>إجمالي XP: <b id="adminXp">0</b></p><p>الدروس المكتملة: <b id="adminDone">0</b></p>
-<input id="annIn" placeholder="اكتب إعلاناً للطلاب"><button onclick="sendAnn()">إرسال إعلان</button><p id="annOut"></p></div>
-<div class="card"><h3>📢 الإعلانات</h3><div id="annList"></div></div>
-</div>
-
-<div style="text-align:center;color:#94a3b8;padding:20px;font-size:13px">CyberPath Academy — تعلّم، تدرّب، احمِ • Learn. Practice. Protect. • نسخة أوفلاين تجريبية</div>
-</main>
-<script>
-let lang='ar';
-let S=JSON.parse(localStorage.getItem('cyber_off')||'{"xp":0,"done":[],"plan":"FREE","name":"ضيف","ann":[]}');
-function save(){localStorage.setItem('cyber_off',JSON.stringify(S));document.getElementById('lessonBox').addEventListener('click',function(e){if(e.target.id==='lessonBox')closeLesson();});
-render();}
-function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');window.scrollTo(0,0);document.getElementById('lessonBox').addEventListener('click',function(e){if(e.target.id==='lessonBox')closeLesson();});
-render();}
-function setLang(l){lang=l;document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';document.getElementById('heroTitle').textContent=l==='ar'?'تعلم الأمن السيبراني من الصفر حتى الاحتراف':'Master Cybersecurity From Zero to Advanced';document.getElementById('heroSub').textContent=l==='ar'?'تعلّم، تدرّب، احمِ. مسارات منظمة + مختبرات محاكاة + اختبارات + مدرّس ذكي.':'Learn. Practice. Protect. Structured paths + simulated labs + quizzes + AI tutor.';}
-let COURSES=[
-{id:1,t:'المستوى 1: أساسيات الكمبيوتر والشبكات',e:'Level 1: Computer & Networking',lessons:[
-{img:'🖥️',dia:'[ جهازك ]  ---( IP: 192.168.1.10 )--->  [ الراوتر ]  --->  [ الإنترنت ]\n        \\n              DNS يحوّل google.com إلى IP',t:'أساسيات الكمبيوتر',c:'الكمبيوتر = معالج CPU + ذاكرة RAM + تخزين + نظام تشغيل. المعالج ينفذ الأوامر، والذاكرة تحفظ ما تعمل عليه الآن، والتخزين يحفظ ملفاتك. مثال عملي: عندما تفتح المتصفح، ينتقل البرنامج من التخزين إلى الذاكرة ليعمل بسرعة.'},
-{img:'🌐',dia:'أنت  -->  DNS: ما هو IP لموقع example.com ؟\nDNS  -->  الجواب: 93.184.216.34\nأنت  -->  اتصال بالموقع',t:'عناوين IP و DNS',c:'كل جهاز على الشبكة له عنوان IP مثل 192.168.1.10. DNS هو دليل الهاتف للإنترنت: يحوّل الاسم الذي تكتبه إلى IP. بدون DNS كنت ستحتاج حفظ أرقام كل المواقع.'},
-{img:'🔒',dia:'HTTP  :  المتصفح <---> الموقع  ( بدون تشفير ❌ )\nHTTPS :  المتصفح <--🔐--> الموقع  ( مشفّر ✅ )\nالمنافذ: 80 = HTTP | 443 = HTTPS | 53 = DNS',t:'HTTP و HTTPS و المنافذ',c:'HTTP ينقل الصفحات بدون تشفير، أما HTTPS فيضيف التشفير. المنفذ Port هو رقم الباب الذي تدخل منه الخدمة: 80 للمواقع العادية، 443 للمواقع الآمنة، 53 لـ DNS. عندما ترى قفلاً في المتصفح فأنت على HTTPS.'},
-{img:'📦',dia:'TCP/IP طبقات:\n[ التطبيق ] HTTP / DNS\n[ النقل ] TCP / UDP\n[ الشبكة ] IP\n[ الرابط ] WiFi / Ethernet',t:'TCP/IP وكيف يعمل الإنترنت',c:'الإنترنت يعمل بطبقات: طبقة التطبيق فيها HTTP و DNS، وطبقة النقل فيها TCP الذي يقسّم البيانات لحزم ويتأكد من وصولها، وطبقة الشبكة فيها IP الذي يوجّه الحزم. عندما ترسل رسالة، تُقسَّم لحزم صغيرة وتُعاد تجميعها عند المستقبل.'}
-],q:{q:'أي منفذ يستخدمه HTTPS؟',o:['80','443','21','25'],a:1}},
-{id:2,t:'المستوى 2: Linux و Windows',e:'Level 2: Linux & Windows',lessons:[
-{img:'🐧',dia:'Terminal:\n$ whoami\ncyberpath\n$ ls\nnotes.txt  labs  projects',t:'أساسيات Linux',c:'Linux نظام مفتوح المصدر تستخدمه معظم خوادم الإنترنت. تتعامل معه عبر Terminal. الأوامر الأساسية: pwd لمعرفة مكانك، ls لعرض الملفات، cd للتنقل، cat لقراءة ملف.'},
-{img:'🔑',dia:'الملف: report.txt\nالمالك: قراءة ✅ كتابة ✅\nالمجموعة: قراءة ✅\nالآخرون: قراءة ❌\nالقاعدة: أقل صلاحية ممكنة',t:'الصلاحيات والمستخدمون',c:'كل ملف له مالك وصلاحيات: قراءة وكتابة وتنفيذ. القاعدة الذهبية في الأمن: أعطِ أقل صلاحية يحتاجها الشخص لعمله فقط. لا تعمل أبداً كمستخدم Root إلا عند الضرورة.'},
-{img:'🪟',dia:'Windows:\n[ المستخدم ] -> [ PowerShell ] -> [ النظام ]\nأوامر: Get-Process | dir | Get-Service',t:'Windows و PowerShell',c:'Windows هو نظام معظم أجهزة المستخدمين والشركات. PowerShell أداة قوية لإدارة النظام وأتمتة المهام. مثال: Get-Process يعرض البرامج العاملة، و dir يعرض الملفات مثل ls في Linux.'},
-{img:'📁',dia:'شجرة الملفات:\n/\n├── home / cyberpath\n├── etc / إعدادات النظام\n└── var / السجلات Logs',t:'إدارة الملفات والسجلات',c:'في Linux كل شيء يبدأ من الجذر /. مجلد home فيه ملفاتك، و etc فيه الإعدادات، و var/log فيه سجلات النظام. السجلات Logs مهمة جداً: هي التي تكشف من دخل للنظام ومتى وماذا فعل.'}
-],q:{q:'أي أمر يعرض المجلد الحالي؟',o:['ls','pwd','cat','echo'],a:1}},
-{id:3,t:'المستوى 3: البرمجة للأمن السيبراني',e:'Level 3: Programming for Security',lessons:[
-{img:'🐍',dia:'Python:\nprint("Hello")\n→ يطبع: Hello\n\nx = 5\nprint(x + 3)  →  8',t:'Python للمبتدئين',c:'Python أسهل لغة للبدء في الأمن السيبراني. تُستخدم للأتمتة وتحليل السجلات وبناء أدوات. ابدأ بـ print والمتغيرات والشروط والحلقات، ثم جرّب كتابة برنامج صغير يفحص كلمات مرور ضعيفة في قائمة.'},
-{img:'⚙️',dia:'Bash Script:\n#!/bin/bash\necho "فحص اليوم"\nls -la\n→ ينفذ كل الأوامر دفعة واحدة',t:'Bash Scripting',c:'Bash Script هو ملف فيه مجموعة أوامر Linux تُنفذ معاً. مثال: سكربت يومي يعرض الملفات الجديدة ويفحص مساحة القرص. الأتمتة توفر وقتك وتقلل الأخطاء.'},
-{img:'🌐',dia:'JavaScript في المتصفح:\nالموقع  -->  JS يعمل في متصفحك\nإذا كان الكود خبيثاً → قد يسرق الجلسة\nالحل: لا تثق بأي كود من موقع مجهول',t:'أساسيات JavaScript',c:'JavaScript لغة الويب: تعمل داخل متصفحك لتجعل المواقع تفاعلية. من ناحية الأمن، يجب أن تفهمها لأن ثغرة XSS تستغل JavaScript. القاعدة: لا تلصق أي كود JavaScript من مصدر مجهول في متصفحك.'},
-{img:'🤖',dia:'مهمة يدوية: 100 ملف × 2 دقيقة = 200 دقيقة 😩\nمهمة مؤتمتة: سكربت واحد = 2 دقيقة 😎',t:'أتمتة المهام ومشروع عملي',c:'المشروع العملي: اكتب سكربت Python يقرأ ملف سجلات ويعدّ كم مرة ظهرت كلمة ERROR. هذا بالضبط ما يفعله محلل الأمن كل يوم، لكن بالأتمتة بدل العمل اليدوي.'}
-],q:{q:'أي لغة هي الأكثر استخداماً في أتمتة الأمن؟',o:['Python','HTML','CSS','SQL فقط'],a:0}},
-{id:4,t:'المستوى 4: أساسيات الأمن السيبراني',e:'Level 4: Cybersecurity Basics',lessons:[
-{img:'🔺',dia:'        السرية Confidentiality\n           /\\ \n          /  \\ \n  السلامة /____\\ التوافر\n  Integrity   Availability',t:'CIA Triad',c:'ثلاثة أهداف لكل نظام آمن: السرية أن لا يرى بياناتك إلا المصرح لهم، والسلامة أن لا يغيّر أحد بياناتك، والتوافر أن يبقى النظام يعمل وقت حاجتك. كل قرار أمني يهدف لحماية واحد أو أكثر من هذه الثلاثة.'},
-{img:'🔐',dia:'رسالة: "مرحبا"\n+ مفتاح التشفير\n= "x7#9!qZ"  ← لا يفهمها أحد\n+ نفس المفتاح عند المستقبل\n= "مرحبا" مرة أخرى ✅',t:'التشفير Encryption',c:'التشفير يحوّل رسالتك إلى رموز غير مفهومة لا يقرأها إلا من يملك المفتاح. مثال: عندما ترسل رسالة واتساب، تُشفَّر في جهازك ولا تُفك إلا في جهاز المستقبل. بدون المفتاح، حتى لو اعترضها أحد لن يفهمها.'},
-{img:'🎣',dia:'رسالة مزيفة:\n"حسابك سيُغلق! اضغط هنا فوراً"\n↓\nرابط مزيف يشبه البنك\n↓\nالضحية يدخل كلمة مروره → تُسرق ❌',t:'Phishing والتصيد',c:'التصيد: رسالة أو موقع يقلّد جهة موثوقة ليخدعك وتدخل بياناتك. علاماته: استعجال، أخطاء إملائية، رابط غريب، طلب كلمة مرور. القاعدة: لا تدخل كلمة مرورك من رابط وصل في رسالة، اذهب للموقع بنفسك.'},
-{img:'🛡️',dia:'[ أنت ] --> [ Firewall الجدار الناري ] --> [ الإنترنت ]\nالجدار يسمح بالمسموح فقط\nويمنع الاتصالات المشبوهة',t:'Firewalls و Malware',c:'الجدار الناري Firewall حارس بين جهازك والإنترنت: يسمح بالاتصالات المسموحة ويمنع المشبوهة. أما Malware فهو برمجيات خبيثة مثل الفيروسات وبرامج الفدية. الحماية: تحديث النظام، مضاد فيروسات، عدم فتح مرفقات مجهولة.'}
-],q:{q:'ما هو التشفير؟',o:['حذف البيانات','تحويل البيانات لشكل غير مقروء إلا بالمفتاح','تسريع الإنترنت','إنشاء كلمة مرور'],a:1}},
-{id:5,t:'المستوى 5: الاختراق الأخلاقي',e:'Level 5: Ethical Hacking',lessons:[
-{img:'🔍',dia:'مراحل الاختراق الأخلاقي:\n1 جمع معلومات\n2 فحص\n3 تحليل ثغرات\n4 تقرير وإصلاح\n⚠️ فقط بإذن كتابي!',t:'منهجية اختبار الاختراق',c:'الاختراق الأخلاقي عمل قانوني له هدف واحد: إيجاد الثغرات قبل المجرمين وإصلاحها. يبدأ بجمع معلومات عامة، ثم فحص، ثم تحليل، ثم كتابة تقرير. بدون إذن كتابي من مالك النظام، أي اختبار يعتبر غير قانوني.'},
-{img:'🗺️',dia:'شبكتك الخاصة:\n192.168.1.1  الراوتر\n192.168.1.10 جهازك\n192.168.1.20 طابعة\nNmap يعرض الأجهزة والمنافذ في شبكتك',t:'Nmap دفاعياً',c:'Nmap أداة مشروعة لفحص شبكتك: تعرض الأجهزة المتصلة والمنافذ المفتوحة. استخدمها فقط على شبكتك أو مختبرك المعزول. مثال دفاعي: اكتشفت منفذاً مفتوحاً لا تحتاجه؟ أغلقه فوراً.'},
-{img:'📋',dia:'تقرير الاختراق الجيد:\n- وصف الثغرة\n- خطورتها\n- كيف تم اكتشافها\n- كيف تُصلَّح\nبدون تقرير = بدون إصلاح',t:'كتابة تقارير الاختراق',c:'أهم مهارة في الاختراق الأخلاقي ليست الاختراق نفسه، بل التقرير. الشركة لا تستفيد من ثغرة اكتشفتها ولم تشرحها بوضوح. التقرير الجيد يشرح الثغرة وخطورتها وطريقة إصلاحها خطوة بخطوة.'}
-],q:{q:'متى يكون اختبار الاختراق قانونياً؟',o:['دائماً','فقط بإذن كتابي من المالك','إذا كان الموقع مشهوراً','إذا لم يكتشفك أحد'],a:1}},
-{id:6,t:'المستوى 6: أمن تطبيقات الويب',e:'Level 6: Web Security',lessons:[
-{img:'🏆',dia:'OWASP Top 10 - أشهر المخاطر:\n1 الحقن Injection\n2 كسر المصادقة\n3 تسرب البيانات الحساسة\n4 XSS\n... والباقي في الدرس الكامل',t:'OWASP Top 10',c:'OWASP Top 10 قائمة بأخطر 10 مخاطر لتطبيقات الويب في العالم. كل مطور ومحلل أمن يجب أن يعرفها. أشهرها: الحقن، وكسر المصادقة، والبرمجة النصية عبر المواقع XSS.'},
-{img:'💉',dia:'هجوم (ممنوع تجربته):\nحقل اسم المستخدم ← " OR 1=1 --"\nالدفاع ✅:\nPrepared Statements\n+ التحقق من المدخلات',t:'SQL Injection دفاعياً',c:'SQL Injection: مهاجم يحقن أوامر قاعدة بيانات في حقل إدخال. الدفاع: استخدم Prepared Statements ولا تثق أبداً بمدخلات المستخدم. هذا الدرس دفاعي فقط: لا تجرب الحقن على أي موقع حقيقي.'},
-{img:'💬',dia:'XSS:\nمهاجم يضع كود JavaScript في تعليق\n↓\nزائر يرى التعليق → الكود يعمل في متصفحه\nالدفاع: ترميز المخرجات + CSP',t:'XSS و API Security',c:'XSS: حقن كود JavaScript خبيث في صفحة يراها الآخرون. الدفاع: ترميز المخرجات وسياسة أمن المحتوى CSP. أما API Security: كل واجهة برمجية يجب أن تتحقق من هوية المستخدم وصلاحياته قبل إعطاء أي بيانات.'}
-],q:{q:'أفضل دفاع ضد SQL Injection؟',o:['إخفاء الموقع','Prepared Statements','كلمة مرور قوية','تغيير الألوان'],a:1}},
-{id:7,t:'المستوى 7: SOC و Blue Team',e:'Level 7: SOC & Blue Team',lessons:[
-{img:'👁️',dia:'[ الأنظمة ] --> [ SIEM يجمع السجلات ] --> [ محلل SOC ]\nتنبيه! محاولات دخول فاشلة كثيرة\n→ يبدأ التحقيق',t:'أساسيات SOC',c:'مركز العمليات الأمنية SOC غرفة مراقبة رقمية: محللون يراقبون التنبيهات 24 ساعة ويستجيبون للحوادث. عملهم يشبه برج المراقبة في المطار: يرون كل شيء ويتدخلون عند الخطر.'},
-{img:'📊',dia:'سجل Log واحد:\n10:02 محاولة دخول فاشلة - IP غريب\n10:03 محاولة دخول فاشلة - نفس IP\n10:04 محاولة دخول فاشلة - نفس IP\n= هجوم تخمين كلمات مرور! 🚨',t:'SIEM وتحليل السجلات',c:'السجلات Logs تسجّل كل ما يحدث: من دخل، ومتى، ومن أي جهاز. SIEM يجمع هذه السجلات من كل الأنظمة ويبحث عن أنماط مشبوهة. مثال: 100 محاولة دخول فاشلة من نفس IP في دقيقة = هجوم واضح.'},
-{img:'🚨',dia:'الاستجابة للحوادث:\n1 احتواء → 2 إيقاف الهجوم\n3 إزالة الخطر → 4 استعادة النظام\n5 تقرير + دروس مستفادة',t:'Incident Response والتحليل الجنائي',c:'عند وقوع حادث: أولاً احتوِ الخطر حتى لا ينتشر، ثم أوقف الهجوم، ثم أزل البرمجيات الخبيثة، ثم أعد النظام للعمل، وأخيراً اكتب تقريراً. التحليل الجنائي الرقمي يجمع الأدلة لمعرفة كيف حدث الهجوم ومن أين بدأ.'}
-],q:{q:'ما وظيفة SIEM؟',o:['تصميم المواقع','جمع وتحليل السجلات لكشف الهجمات','تشفير الصور','إنشاء ألعاب'],a:1}},
-{id:8,t:'المستوى 8: الأمن المتقدم',e:'Level 8: Advanced',lessons:[
-{img:'☁️',dia:'السحابة:\n[ تطبيقك ]\n[ صلاحيات محدودة ✅ ]\n[ تشفير ✅ ]\n[ سجلات ومراقبة ✅ ]\nخطأ واحد في الإعداد = باب مفتوح ❌',t:'Cloud Security',c:'أمن السحابة: معظم الاختراقات السحابية سببها إعداد خاطئ وليس ثغرة معقدة. مثال: حاوية تخزين مفتوحة للجميع. القواعد: صلاحيات محدودة، تشفير، مراجعة الإعدادات، مراقبة مستمرة.'},
-{img:'🔴🔵',dia:'Red Team 🔴: يهاجم في مختبر مصرح به\nليكشف نقاط الضعف\nBlue Team 🔵: يدافع ويكتشف\nويستجيب للهجوم\nمعاً = دفاع أقوى',t:'Red Team و Blue Team',c:'Red Team فريق هجومي مصرح له يقلّد المهاجمين الحقيقيين في بيئة آمنة لاختبار الدفاعات. Blue Team فريق دفاعي يكتشف الهجوم ويستجيب. أفضل المؤسسات تجمعهما في تمرين واحد يسمى Purple Team.'},
-{img:'🦠',dia:'تحليل البرمجيات الخبيثة:\n1 في بيئة معزولة تماماً\n2 مراقبة ما يفعله الملف\n3 هل يسرق بيانات؟ هل يتصل بخادم غريب؟\n⚠️ لا تفتح ملفاً مشبوهاً على جهازك',t:'Malware Analysis',c:'تحليل البرمجيات الخبيثة يتم فقط في بيئة معزولة Sandbox، أبداً على جهازك. المحلل يراقب: ماذا يفعل الملف؟ هل ينشئ ملفات؟ هل يتصل بالإنترنت؟ الهدف: فهم الخطر وكيف نمنعه.'}
-],q:{q:'ما دور Blue Team؟',o:['الهجوم','الدفاع والكشف والاستجابة','كتابة الإعلانات','بيع الأجهزة'],a:1}},
-];
-function render(){
-document.getElementById('xp1').textContent=S.xp;document.getElementById('dashXp').textContent=S.xp;document.getElementById('rankXp').textContent=S.xp;document.getElementById('dashDone').textContent=S.done.length;document.getElementById('adminXp').textContent=S.xp;document.getElementById('adminDone').textContent=S.done.length;
-let p=Math.min(100,Math.round(S.done.length/18*100));document.getElementById('progBar').style.width=p+'%';document.getElementById('progTxt').textContent=p+'%';
-document.getElementById('dashName').textContent=S.name;document.getElementById('dashPlan').textContent=S.plan;document.getElementById('planNow').textContent=S.plan;document.getElementById('userLabel').textContent=S.name==='ضيف'?'دخول':S.name;
-document.getElementById('adminUsers').textContent=1;
-let cl=document.getElementById('courseList');cl.innerHTML='';
-COURSES.forEach(c=>{let d=document.createElement('div');d.className='card';d.innerHTML='<h3>'+c.t+'</h3><p class="muted">'+c.e+'</p>'+c.lessons.map((l,i)=>'<button class="sec" style="margin:3px" onclick="openLesson('+c.id+','+i+')">'+(S.done.includes(c.id+'-'+i)?'✅ ':'')+l.t+'</button>').join('')+'<br><button onclick="openQuiz('+c.id+')">📝 اختبار المستوى</button>';cl.appendChild(d);});
-document.getElementById('annList').innerHTML=S.ann.map(a=>'<div class="msg ai">'+a+'</div>').join('')||'<span class="muted">لا توجد إعلانات بعد</span>';
+function SectionHead({ title, sub }: { title: string; sub?: string }) {
+  return (
+    <div className="mb-8 max-w-2xl">
+      <h2 className="text-2xl font-bold sm:text-3xl">{title}</h2>
+      {sub && <p className="mt-2 text-muted-foreground">{sub}</p>}
+    </div>
+  );
 }
-function openLesson(cid,li){let c=COURSES.find(x=>x.id===cid);let l=c?c.lessons[li]:null;let box=document.getElementById('lessonBox');let ct=document.getElementById('lessonContent');if(!l){ct.innerHTML='<h3>خطأ: الدرس غير موجود</h3><p>أعد تحميل الصفحة وحاول مجدداً.</p>';box.classList.remove('hidden');return;}let dia=(l.dia||'').replace(/\n/g,'<br>');ct.innerHTML='<div class="illus">'+(l.img||'📘')+'</div><h3>'+l.t+'</h3><div class="diagram">'+dia+'</div><p style="line-height:1.9">'+l.c+'</p><button onclick="completeLesson('+cid+','+li+');closeLesson();">✅ إكمال الدرس +50 XP</button>';box.classList.remove('hidden');}
-function closeLesson(){document.getElementById('lessonBox').classList.add('hidden');}
-function completeLesson(cid,li){let k=cid+'-'+li;if(!S.done.includes(k)){S.done.push(k);S.xp+=50;save();alert('أحسنت! +50 XP');}else alert('هذا الدرس مكتمل already ✅');}
-function openQuiz(cid){let c=COURSES.find(x=>x.id===cid);let box=document.getElementById('lessonBox');let ct=document.getElementById('lessonContent');ct.innerHTML='<h3>اختبار: '+c.t+'</h3><p>'+c.q.q+'</p>'+c.q.o.map((o,i)=>'<button class="sec" style="display:block;width:100%;margin:4px;text-align:start" onclick="checkQuiz('+cid+','+i+');closeLesson();">'+o+'</button>').join('');box.classList.remove('hidden');}
-function checkQuiz(cid,i){let c=COURSES.find(x=>x.id===cid);if(i===c.q.a){S.xp+=100;save();alert('إجابة صحيحة! +100 XP 🎉');}else alert('إجابة خاطئة، حاول مرة أخرى. تلميح: راجع درس هذا المستوى.');}
-function runTerm(){let v=document.getElementById('termIn').value.trim().toLowerCase();let out=document.getElementById('termOut');let r='';if(v==='help')r='الأوامر المتاحة: help, pwd, whoami, ls, cat notes.txt, echo hello';else if(v==='pwd')r='/home/cyberpath';else if(v==='whoami')r='cyberpath';else if(v==='ls')r='notes.txt  projects  labs';else if(v==='cat notes.txt')r='تذكير: لا تختبر إلا على أنظمتك الخاصة.';else if(v.startsWith('echo '))r=v.slice(5);else r='أمر غير معروف في المحاكاة. اكتب help';out.textContent+='\n$ '+v+'\n'+r;document.getElementById('termIn').value='';S.xp+=10;save();}
-function netLab(){document.getElementById('netOut').textContent='فحص تجريبي لـ '+document.getElementById('hostIn').value+'\n80/tcp  مفتوح (تجريبي)\n443/tcp مفتوح (تجريبي)\n22/tcp  مغلق (تجريبي)\nالنتيجة: هذا فحص محاكاة فقط.';S.xp+=20;save();}
-function pyLab(){let v=document.getElementById('pyIn').value;let o=document.getElementById('pyOut');if(v.includes('print')){let m=v.match(/"([^"]*)"/);o.textContent=m?m[1]:'Hello';}else if(v.trim()==='2+3')o.textContent='5';else o.textContent='مثال مدعوم في المحاكاة: print("...") أو 2+3';S.xp+=20;save();}
-function ctf(){let v=document.getElementById('ctfIn').value.trim().toLowerCase();if(v==='https'){document.getElementById('ctfOut').textContent='صحيح! +100 XP 🎉';S.xp+=100;save();}else document.getElementById('ctfOut').textContent='حاول مرة أخرى. تلميح: يبدأ بـ H وينتهي بـ S';}
-function askAI(){let q=document.getElementById('chatIn').value.toLowerCase();let box=document.getElementById('chatBox');box.innerHTML+='<div class="msg me">'+document.getElementById('chatIn').value+'</div>';let a='سؤال جميل! ابدأ من الأساسيات: افهم المفهوم أولاً، ثم جرّبه في مختبر المحاكاة، ثم أجب عن اختبار المستوى. هل تريد أن أقترح لك الدرس التالي؟';if(q.includes('تشفير')||q.includes('encrypt'))a='التشفير Encryption: تحويل البيانات إلى شكل غير مقروء إلا بمن يملك المفتاح. مثال: HTTPS يشفر اتصالك بالموقع.';else if(q.includes('sql'))a='SQL Injection دفاعياً: المهاجم يحاول حقن أوامر في حقل إدخال. الدفاع: Prepared Statements + التحقق من المدخلات. لا تجربها على أي موقع حقيقي.';else if(q.includes('phishing')||q.includes('تصيد'))a='التصيد Phishing: رسائل مزيفة تقلّد جهة موثوقة. تحقق من المرسل، لا تضغط روابط مشبوهة، وفعّل المصادقة الثنائية.';else if(q.includes('التالي')||q.includes('درس'))a='الدرس التالي المقترح: '+ (S.done.length===0?'المستوى 1 — أساسيات الكمبيوتر':'تابع من حيث توقفت في صفحة الدورات.');else if(q.includes('nmap'))a='Nmap أداة فحص شبكات. استخدمها فقط على شبكتك أو مختبرك المعزول وبإذن، وهدفها الدفاعي هو اكتشاف الأجهزة والمنافذ في شبكتك.';box.innerHTML+='<div class="msg ai">'+a+'</div>';document.getElementById('chatIn').value='';box.scrollTop=9999;}
-function setPlan(p){S.plan=p;save();alert('تم اختيار خطة '+p+' (وضع تجريبي — بدون دفع حقيقي)');}
-function saveUser(){let n=document.getElementById('nameIn').value||'طالب';let e=document.getElementById('emailIn').value||'';S.name=n;if(e==='admin@cyberpath.academy')S.plan='PRO';save();document.getElementById('loginMsg').textContent='تم حفظ حسابك: '+n+' ✅ اذهب إلى لوحة الطالب.';go('dash');}
-function makeCert(){if(S.done.length<3){alert('أكمل 3 دروس على الأقل أولاً. أكملت: '+S.done.length);}else{document.getElementById('certBox').innerHTML='<div style="border:2px solid #a78bfa;padding:16px;border-radius:12px;text-align:center"><h2>🎓 شهادة إتمام</h2><p>تشهد CyberPath Academy أن</p><h3>'+S.name+'</h3><p>أكمل '+S.done.length+' دروساً في الأمن السيبراني</p><p>رقم التحقق: CP-'+(1000+S.xp)+'</p><p>'+new Date().toLocaleDateString('ar')+'</p></div>';}}
-function sendAnn(){let v=document.getElementById('annIn').value;if(!v)return;S.ann.push(v);save();document.getElementById('annOut').textContent='تم نشر الإعلان ✅';}
-document.getElementById('lessonBox').addEventListener('click',function(e){if(e.target.id==='lessonBox')closeLesson();});
-render();
-</script>
 
-<div id="lessonBox" class="modal hidden">
-  <div class="modal-card">
-    <button class="closebtn" onclick="closeLesson()">✖ إغلاق</button>
-    <div style="clear:both"></div>
-    <div id="lessonContent" style="min-height:200px"></div>
-  </div>
-</div>
-</body>
-</html>
+function Home() {
+  const { t, lang, dir } = useLang();
+  const { data: catalog } = useSuspenseQuery(catalogQuery());
+  const { data: home } = useSuspenseQuery(homeQuery());
+  const { data: m } = useMembership();
+  const tier = m?.tier ?? "free";
+  const Arrow = dir === "rtl" ? ArrowLeft : ArrowRight;
+
+  const learnerMap = new Map(home.learners.map((l) => [l.course_id, Number(l.learners)]));
+  const hasLearners = home.learners.length > 0;
+  const popular = [...catalog.courses]
+    .sort((a, b) => (learnerMap.get(b.id) ?? 0) - (learnerMap.get(a.id) ?? 0))
+    .slice(0, 6);
+
+  const stats: { key: DictKey; value: number; icon: typeof Users }[] = [
+    { key: "stat_students", value: home.stats.students ?? 0, icon: Users },
+    { key: "stat_courses", value: home.stats.courses ?? 0, icon: Layers },
+    { key: "stat_lessons", value: home.stats.lessons ?? 0, icon: BookOpen },
+    { key: "stat_completions", value: home.stats.completions ?? 0, icon: CheckCircle2 },
+  ];
+
+  return (
+    <div>
+      {/* Hero */}
+      <section className="relative overflow-hidden border-b border-border/60">
+        <img
+          src={heroImg}
+          alt=""
+          width={1920}
+          height={1088}
+          className="absolute inset-0 h-full w-full object-cover opacity-70 rtl:-scale-x-100"
+        />
+        <div className="absolute inset-0 bg-linear-to-r rtl:bg-linear-to-l from-background via-background/85 to-background/10" />
+        <div className="absolute inset-0 bg-grid opacity-20" />
+        <div className="relative mx-auto flex min-h-[78vh] max-w-7xl flex-col justify-center px-4 py-20 sm:px-6">
+          <div className="max-w-2xl animate-fade-up space-y-6">
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 font-mono text-xs text-primary">
+              <span className="size-1.5 animate-pulse-glow rounded-full bg-primary" /> {t("hero_kicker")}
+            </span>
+            <h1 className="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+              {t("hero_title_1")}
+              <br />
+              <span className="text-brand">{t("hero_title_2")}</span>
+            </h1>
+            <p className="max-w-xl text-lg text-muted-foreground">{t("hero_sub")}</p>
+            <div className="flex flex-wrap gap-3">
+              <Button asChild variant="hero" size="xl">
+                <Link to="/courses" search={{ level: "beginner" }}>
+                  {t("start_learning")} <Arrow />
+                </Link>
+              </Button>
+              <Button asChild variant="glow" size="xl">
+                <a href="#paths">{t("view_paths")}</a>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Paths */}
+      <section id="paths" className="mx-auto max-w-7xl scroll-mt-20 px-4 py-20 sm:px-6">
+        <SectionHead title={t("paths_title")} sub={t("paths_sub")} />
+        <div className="grid gap-5 md:grid-cols-3">
+          {LEVELS.map((level, i) => {
+            const courses = catalog.courses.filter((c) => c.level === level);
+            const lessons = courses.reduce((n, c) => n + (catalog.counts[c.id]?.lessons ?? 0), 0);
+            return (
+              <Link
+                key={level}
+                to="/courses"
+                search={{ level }}
+                className="card-cyber card-cyber-hover group relative overflow-hidden p-6"
+              >
+                <span className={`font-mono text-5xl font-bold opacity-20 ${LEVEL_TEXT[level]}`}>0{i + 1}</span>
+                <h3 className={`mt-2 text-2xl font-bold ${LEVEL_TEXT[level]}`}>{t(levelKey(level))}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{t(`level_${level}_desc` as DictKey)}</p>
+                <div className="mt-5 flex items-center gap-4 text-sm">
+                  <span>{courses.length} {t("courses_count")}</span>
+                  <span className="text-muted-foreground">•</span>
+                  <span>{lessons} {t("lessons_count")}</span>
+                  <Arrow className="ms-auto size-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Popular */}
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+        <SectionHead title={t("popular_title")} sub={hasLearners ? t("popular_sub") : t("popular_sub_empty")} />
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {popular.map((c) => (
+            <CourseCard
+              key={c.id}
+              course={c}
+              lessons={catalog.counts[c.id]?.lessons ?? 0}
+              minutes={catalog.counts[c.id]?.minutes ?? 0}
+              tier={tier}
+              learners={learnerMap.get(c.id)}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+        <div className="card-cyber relative overflow-hidden p-8 sm:p-10">
+          <div className="absolute inset-0 bg-hero" />
+          <div className="relative">
+            <SectionHead title={t("stats_title")} sub={t("stats_sub")} />
+            <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+              {stats.map((s) => (
+                <div key={s.key} className="space-y-2">
+                  <s.icon className="size-5 text-primary" />
+                  <div className="font-display text-4xl font-bold">{s.value.toLocaleString(lang === "ar" ? "ar-EG" : "en-US")}</div>
+                  <div className="text-sm text-muted-foreground">{t(s.key)}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+        <SectionHead title={t("testimonials_title")} />
+        {home.testimonials.length === 0 ? (
+          <EmptyState icon={<MessageSquareQuote className="size-8" />} title={t("testimonials_empty")}>
+            <ReviewForm />
+          </EmptyState>
+        ) : (
+          <>
+            <div className="grid gap-5 md:grid-cols-3">
+              {home.testimonials.map((r) => (
+                <figure key={r.id} className="card-cyber space-y-3 p-6">
+                  <div className="flex gap-0.5 text-warning">
+                    {Array.from({ length: r.rating }).map((_, i) => <Star key={i} className="size-4 fill-current" />)}
+                  </div>
+                  <blockquote className="text-sm leading-relaxed">“{r.content}”</blockquote>
+                  <figcaption className="text-sm font-semibold text-primary">{r.author_name}</figcaption>
+                </figure>
+              ))}
+            </div>
+            <div className="mt-6 flex justify-center"><ReviewForm /></div>
+          </>
+        )}
+      </section>
+
+      {/* Pricing */}
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+        <SectionHead title={t("pricing_title")} sub={t("pricing_sub")} />
+        <PricingCards plans={home.plans} />
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="card-cyber flex flex-col items-center gap-4 bg-grid p-10 text-center">
+          <GraduationCap className="size-10 text-primary" />
+          <h2 className="text-2xl font-bold">{t("create_account")}</h2>
+          <Button asChild variant="hero" size="xl">
+            <Link to="/courses" search={{ level: "beginner" }}>{t("start_learning")} <Arrow /></Link>
+          </Button>
+        </div>
+      </section>
+    </div>
+  );
+}
