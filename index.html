@@ -19,6 +19,12 @@ input,select,textarea{width:100%;padding:11px;border-radius:10px;border:1px soli
 .top{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .hero{background:linear-gradient(135deg,#4c1d95,#1d4ed8,#0ea5e9);border-radius:20px;padding:28px 20px}
 h1{font-size:32px;line-height:1.2;margin:8px 0}.muted{color:#cbd5e1}
+.illus{font-size:64px;text-align:center;padding:14px;background:linear-gradient(135deg,#1e1b4b,#0e7490);border-radius:14px;margin:10px 0}
+.diagram{background:#020617;border:1px dashed #64748b;border-radius:12px;padding:12px;margin:10px 0;font-family:monospace;white-space:pre-wrap;text-align:center;line-height:1.7}
+.lesson-img{width:100%;border-radius:14px;display:block}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;display:flex;align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto}
+.modal-card{background:#0f172a;border:1px solid #a78bfa;border-radius:18px;padding:18px;max-width:720px;width:100%;margin-top:20px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.closebtn{float:left;background:#334155}
 .lab{background:#020617;border:1px solid #334155;border-radius:12px;padding:12px;font-family:monospace;white-space:pre-wrap;min-height:120px}
 .msg{padding:10px;border-radius:10px;margin:6px 0}.me{background:#312e81}.ai{background:#0f766e}
 .ok{color:#4ade80}.warn{background:#fef3c7;color:#92400e;padding:10px;border-radius:10px}
@@ -52,7 +58,7 @@ table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #334155;
 <p class="muted" id="heroSub">تعلّم، تدرّب، احمِ. مسارات منظمة + مختبرات محاكاة + اختبارات + مدرّس ذكي.</p>
 <button onclick="go('courses')">ابدأ التعلم 🚀</button>
 <button class="sec" onclick="go('labs')">جرّب المختبر</button>
-<p class="muted" style="font-size:13px">نسخة أوفلاين تعمل بدون إنترنت. بياناتك محفوظة في هذا المتصفح فقط.</p>
+<p class="muted" style="font-size:13px">نسخة أوفلاين v2 — دروس موسّعة + صورة توضيحية لكل درس. بياناتك محفوظة في هذا المتصفح فقط.</p>
 </div>
 <div class="grid">
 <div class="card"><h3>🎯 XP: <span id="xp1">0</span></h3><p>أكمل درساً أو اختباراً أو مختبراً لتجمع نقاطاً.</p><div style="background:#1e293b;border-radius:20px;height:14px;overflow:hidden"><div id="progBar" style="height:14px;background:#a78bfa;width:0%"></div></div><p><span id="progTxt">0%</span> من المسار</p></div>
@@ -67,7 +73,7 @@ table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #334155;
 <h2>📚 الدورات والمسارات</h2>
 <p class="muted">اختر مستوى، افتح درساً، أجب عن الاختبار، وستُحفظ نتيجتك.</p>
 <div id="courseList"></div>
-<div id="lessonBox" class="card hidden"></div>
+<div id="lessonBox" class="modal hidden"><div class="modal-card"><button class="closebtn" onclick="closeLesson()">✖ إغلاق</button><div id="lessonContent"></div></div></div>
 </div>
 
 <div id="labs" class="page hidden">
@@ -124,18 +130,56 @@ table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #334155;
 <script>
 let lang='ar';
 let S=JSON.parse(localStorage.getItem('cyber_off')||'{"xp":0,"done":[],"plan":"FREE","name":"ضيف","ann":[]}');
-function save(){localStorage.setItem('cyber_off',JSON.stringify(S));render();}
-function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');window.scrollTo(0,0);render();}
+function save(){localStorage.setItem('cyber_off',JSON.stringify(S));document.getElementById('lessonBox').addEventListener('click',function(e){if(e.target.id==='lessonBox')closeLesson();});
+render();}
+function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');window.scrollTo(0,0);document.getElementById('lessonBox').addEventListener('click',function(e){if(e.target.id==='lessonBox')closeLesson();});
+render();}
 function setLang(l){lang=l;document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';document.getElementById('heroTitle').textContent=l==='ar'?'تعلم الأمن السيبراني من الصفر حتى الاحتراف':'Master Cybersecurity From Zero to Advanced';document.getElementById('heroSub').textContent=l==='ar'?'تعلّم، تدرّب، احمِ. مسارات منظمة + مختبرات محاكاة + اختبارات + مدرّس ذكي.':'Learn. Practice. Protect. Structured paths + simulated labs + quizzes + AI tutor.';}
 let COURSES=[
-{id:1,t:'المستوى 1: أساسيات الكمبيوتر والشبكات',e:'Level 1: Computer & Networking',lessons:[{t:'أساسيات الكمبيوتر',c:'الكمبيوتر يتكون من معالج وذاكرة وتخزين. نظام التشغيل يدير هذه الموارد.'},{t:'عناوين IP و DNS',c:'IP هو عنوان الجهاز على الشبكة. DNS يحوّل اسم الموقع إلى عنوان IP.'},{t:'HTTP و HTTPS و المنافذ',c:'HTTPS = HTTP + تشفير. المنفذ 443 للمواقع الآمنة، و 80 للعادية.'}],q:{q:'أي منفذ يستخدمه HTTPS؟',o:['80','443','21','25'],a:1}},
-{id:2,t:'المستوى 2: Linux و Windows',e:'Level 2: Linux & Windows',lessons:[{t:'أساسيات Linux',c:'Linux نظام مفتوح المصدر. الأوامر الأساسية: ls, pwd, cd, cat.'},{t:'الصلاحيات',c:'كل ملف له مالك وصلاحيات قراءة وكتابة وتنفيذ. لا تعطِ صلاحيات زائدة.'},{t:'PowerShell',c:'PowerShell أداة إدارة في Windows لتنفيذ المهام وأتمتتها بأمان.'}],q:{q:'أي أمر يعرض المجلد الحالي؟',o:['ls','pwd','cat','echo'],a:1}},
-{id:3,t:'المستوى 3: البرمجة للأمن السيبراني',e:'Level 3: Programming for Security',lessons:[{t:'Python للمبتدئين',c:'Python لغة سهلة وقوية للأتمتة والتحليل. ابدأ بـ print والمتغيرات.'},{t:'Bash Scripting',c:'Bash يسمح بأتمتة مهام Linux في ملف واحد قابل للتنفيذ.'}],q:{q:'أي لغة هي الأكثر استخداماً في أتمتة الأمن؟',o:['Python','HTML','CSS','SQL فقط'],a:0}},
-{id:4,t:'المستوى 4: أساسيات الأمن السيبراني',e:'Level 4: Cybersecurity Basics',lessons:[{t:'CIA Triad',c:'السرية Confidentiality + السلامة Integrity + التوافر Availability.'},{t:'التشفير Encryption',c:'التشفير يحوّل البيانات إلى شكل غير مقروء إلا لمن يملك المفتاح.'},{t:'Phishing',c:'التصيد: رسائل مزيفة تخدعك لإدخال بياناتك. تحقق دائماً من المرسل والرابط.'}],q:{q:'ما هو التشفير؟',o:['حذف البيانات','تحويل البيانات لشكل غير مقروء إلا بالمفتاح','تسريع الإنترنت','إنشاء كلمة مرور'],a:1}},
-{id:5,t:'المستوى 5: الاختراق الأخلاقي',e:'Level 5: Ethical Hacking',lessons:[{t:'منهجية اختبار الاختراق',c:'جمع معلومات، فحص، تحليل ثغرات، تقرير — فقط بإذن كتابي من مالك النظام.'},{t:'Nmap دفاعياً',c:'Nmap أداة فحص شبكات. استخدمها فقط على شبكتك أو مختبرك المعزول.'}],q:{q:'متى يكون اختبار الاختراق قانونياً؟',o:['دائماً','فقط بإذن كتابي من المالك','إذا كان الموقع مشهوراً','إذا لم يكتشفك أحد'],a:1}},
-{id:6,t:'المستوى 6: أمن تطبيقات الويب',e:'Level 6: Web Security',lessons:[{t:'OWASP Top 10',c:'أخطر 10 مخاطر لتطبيقات الويب، منها الحقن وكسر المصادقة.'},{t:'SQL Injection دفاعياً',c:'الحل: استعلامات مُعدّة مسبقاً Prepared Statements وعدم الثقة بمدخلات المستخدم.'}],q:{q:'أفضل دفاع ضد SQL Injection؟',o:['إخفاء الموقع','Prepared Statements','كلمة مرور قوية','تغيير الألوان'],a:1}},
-{id:7,t:'المستوى 7: SOC و Blue Team',e:'Level 7: SOC & Blue Team',lessons:[{t:'أساسيات SOC',c:'مركز العمليات الأمنية يراقب التنبيهات ويستجيب للحوادث.'},{t:'SIEM و Logs',c:'SIEM يجمع السجلات من الأنظمة ويكشف الأنماط المشبوهة.'}],q:{q:'ما وظيفة SIEM؟',o:['تصميم المواقع','جمع وتحليل السجلات لكشف الهجمات','تشفير الصور','إنشاء ألعاب'],a:1}},
-{id:8,t:'المستوى 8: الأمن المتقدم',e:'Level 8: Advanced',lessons:[{t:'Cloud Security',c:'أمن السحابة: إعدادات صحيحة، صلاحيات محدودة، تشفير، مراقبة.'},{t:'Red Team و Blue Team',c:'Red Team يهاجم في مختبر مصرح به، Blue Team يدافع ويكتشف ويستجيب.'}],q:{q:'ما دور Blue Team؟',o:['الهجوم','الدفاع والكشف والاستجابة','كتابة الإعلانات','بيع الأجهزة'],a:1}},
+{id:1,t:'المستوى 1: أساسيات الكمبيوتر والشبكات',e:'Level 1: Computer & Networking',lessons:[
+{img:'🖥️',dia:'[ جهازك ]  ---( IP: 192.168.1.10 )--->  [ الراوتر ]  --->  [ الإنترنت ]\n        \\n              DNS يحوّل google.com إلى IP',t:'أساسيات الكمبيوتر',c:'الكمبيوتر = معالج CPU + ذاكرة RAM + تخزين + نظام تشغيل. المعالج ينفذ الأوامر، والذاكرة تحفظ ما تعمل عليه الآن، والتخزين يحفظ ملفاتك. مثال عملي: عندما تفتح المتصفح، ينتقل البرنامج من التخزين إلى الذاكرة ليعمل بسرعة.'},
+{img:'🌐',dia:'أنت  -->  DNS: ما هو IP لموقع example.com ؟\nDNS  -->  الجواب: 93.184.216.34\nأنت  -->  اتصال بالموقع',t:'عناوين IP و DNS',c:'كل جهاز على الشبكة له عنوان IP مثل 192.168.1.10. DNS هو دليل الهاتف للإنترنت: يحوّل الاسم الذي تكتبه إلى IP. بدون DNS كنت ستحتاج حفظ أرقام كل المواقع.'},
+{img:'🔒',dia:'HTTP  :  المتصفح <---> الموقع  ( بدون تشفير ❌ )\nHTTPS :  المتصفح <--🔐--> الموقع  ( مشفّر ✅ )\nالمنافذ: 80 = HTTP | 443 = HTTPS | 53 = DNS',t:'HTTP و HTTPS و المنافذ',c:'HTTP ينقل الصفحات بدون تشفير، أما HTTPS فيضيف التشفير. المنفذ Port هو رقم الباب الذي تدخل منه الخدمة: 80 للمواقع العادية، 443 للمواقع الآمنة، 53 لـ DNS. عندما ترى قفلاً في المتصفح فأنت على HTTPS.'},
+{img:'📦',dia:'TCP/IP طبقات:\n[ التطبيق ] HTTP / DNS\n[ النقل ] TCP / UDP\n[ الشبكة ] IP\n[ الرابط ] WiFi / Ethernet',t:'TCP/IP وكيف يعمل الإنترنت',c:'الإنترنت يعمل بطبقات: طبقة التطبيق فيها HTTP و DNS، وطبقة النقل فيها TCP الذي يقسّم البيانات لحزم ويتأكد من وصولها، وطبقة الشبكة فيها IP الذي يوجّه الحزم. عندما ترسل رسالة، تُقسَّم لحزم صغيرة وتُعاد تجميعها عند المستقبل.'}
+],q:{q:'أي منفذ يستخدمه HTTPS؟',o:['80','443','21','25'],a:1}},
+{id:2,t:'المستوى 2: Linux و Windows',e:'Level 2: Linux & Windows',lessons:[
+{img:'🐧',dia:'Terminal:\n$ whoami\ncyberpath\n$ ls\nnotes.txt  labs  projects',t:'أساسيات Linux',c:'Linux نظام مفتوح المصدر تستخدمه معظم خوادم الإنترنت. تتعامل معه عبر Terminal. الأوامر الأساسية: pwd لمعرفة مكانك، ls لعرض الملفات، cd للتنقل، cat لقراءة ملف.'},
+{img:'🔑',dia:'الملف: report.txt\nالمالك: قراءة ✅ كتابة ✅\nالمجموعة: قراءة ✅\nالآخرون: قراءة ❌\nالقاعدة: أقل صلاحية ممكنة',t:'الصلاحيات والمستخدمون',c:'كل ملف له مالك وصلاحيات: قراءة وكتابة وتنفيذ. القاعدة الذهبية في الأمن: أعطِ أقل صلاحية يحتاجها الشخص لعمله فقط. لا تعمل أبداً كمستخدم Root إلا عند الضرورة.'},
+{img:'🪟',dia:'Windows:\n[ المستخدم ] -> [ PowerShell ] -> [ النظام ]\nأوامر: Get-Process | dir | Get-Service',t:'Windows و PowerShell',c:'Windows هو نظام معظم أجهزة المستخدمين والشركات. PowerShell أداة قوية لإدارة النظام وأتمتة المهام. مثال: Get-Process يعرض البرامج العاملة، و dir يعرض الملفات مثل ls في Linux.'},
+{img:'📁',dia:'شجرة الملفات:\n/\n├── home / cyberpath\n├── etc / إعدادات النظام\n└── var / السجلات Logs',t:'إدارة الملفات والسجلات',c:'في Linux كل شيء يبدأ من الجذر /. مجلد home فيه ملفاتك، و etc فيه الإعدادات، و var/log فيه سجلات النظام. السجلات Logs مهمة جداً: هي التي تكشف من دخل للنظام ومتى وماذا فعل.'}
+],q:{q:'أي أمر يعرض المجلد الحالي؟',o:['ls','pwd','cat','echo'],a:1}},
+{id:3,t:'المستوى 3: البرمجة للأمن السيبراني',e:'Level 3: Programming for Security',lessons:[
+{img:'🐍',dia:'Python:\nprint("Hello")\n→ يطبع: Hello\n\nx = 5\nprint(x + 3)  →  8',t:'Python للمبتدئين',c:'Python أسهل لغة للبدء في الأمن السيبراني. تُستخدم للأتمتة وتحليل السجلات وبناء أدوات. ابدأ بـ print والمتغيرات والشروط والحلقات، ثم جرّب كتابة برنامج صغير يفحص كلمات مرور ضعيفة في قائمة.'},
+{img:'⚙️',dia:'Bash Script:\n#!/bin/bash\necho "فحص اليوم"\nls -la\n→ ينفذ كل الأوامر دفعة واحدة',t:'Bash Scripting',c:'Bash Script هو ملف فيه مجموعة أوامر Linux تُنفذ معاً. مثال: سكربت يومي يعرض الملفات الجديدة ويفحص مساحة القرص. الأتمتة توفر وقتك وتقلل الأخطاء.'},
+{img:'🌐',dia:'JavaScript في المتصفح:\nالموقع  -->  JS يعمل في متصفحك\nإذا كان الكود خبيثاً → قد يسرق الجلسة\nالحل: لا تثق بأي كود من موقع مجهول',t:'أساسيات JavaScript',c:'JavaScript لغة الويب: تعمل داخل متصفحك لتجعل المواقع تفاعلية. من ناحية الأمن، يجب أن تفهمها لأن ثغرة XSS تستغل JavaScript. القاعدة: لا تلصق أي كود JavaScript من مصدر مجهول في متصفحك.'},
+{img:'🤖',dia:'مهمة يدوية: 100 ملف × 2 دقيقة = 200 دقيقة 😩\nمهمة مؤتمتة: سكربت واحد = 2 دقيقة 😎',t:'أتمتة المهام ومشروع عملي',c:'المشروع العملي: اكتب سكربت Python يقرأ ملف سجلات ويعدّ كم مرة ظهرت كلمة ERROR. هذا بالضبط ما يفعله محلل الأمن كل يوم، لكن بالأتمتة بدل العمل اليدوي.'}
+],q:{q:'أي لغة هي الأكثر استخداماً في أتمتة الأمن؟',o:['Python','HTML','CSS','SQL فقط'],a:0}},
+{id:4,t:'المستوى 4: أساسيات الأمن السيبراني',e:'Level 4: Cybersecurity Basics',lessons:[
+{img:'🔺',dia:'        السرية Confidentiality\n           /\\ \n          /  \\ \n  السلامة /____\\ التوافر\n  Integrity   Availability',t:'CIA Triad',c:'ثلاثة أهداف لكل نظام آمن: السرية أن لا يرى بياناتك إلا المصرح لهم، والسلامة أن لا يغيّر أحد بياناتك، والتوافر أن يبقى النظام يعمل وقت حاجتك. كل قرار أمني يهدف لحماية واحد أو أكثر من هذه الثلاثة.'},
+{img:'🔐',dia:'رسالة: "مرحبا"\n+ مفتاح التشفير\n= "x7#9!qZ"  ← لا يفهمها أحد\n+ نفس المفتاح عند المستقبل\n= "مرحبا" مرة أخرى ✅',t:'التشفير Encryption',c:'التشفير يحوّل رسالتك إلى رموز غير مفهومة لا يقرأها إلا من يملك المفتاح. مثال: عندما ترسل رسالة واتساب، تُشفَّر في جهازك ولا تُفك إلا في جهاز المستقبل. بدون المفتاح، حتى لو اعترضها أحد لن يفهمها.'},
+{img:'🎣',dia:'رسالة مزيفة:\n"حسابك سيُغلق! اضغط هنا فوراً"\n↓\nرابط مزيف يشبه البنك\n↓\nالضحية يدخل كلمة مروره → تُسرق ❌',t:'Phishing والتصيد',c:'التصيد: رسالة أو موقع يقلّد جهة موثوقة ليخدعك وتدخل بياناتك. علاماته: استعجال، أخطاء إملائية، رابط غريب، طلب كلمة مرور. القاعدة: لا تدخل كلمة مرورك من رابط وصل في رسالة، اذهب للموقع بنفسك.'},
+{img:'🛡️',dia:'[ أنت ] --> [ Firewall الجدار الناري ] --> [ الإنترنت ]\nالجدار يسمح بالمسموح فقط\nويمنع الاتصالات المشبوهة',t:'Firewalls و Malware',c:'الجدار الناري Firewall حارس بين جهازك والإنترنت: يسمح بالاتصالات المسموحة ويمنع المشبوهة. أما Malware فهو برمجيات خبيثة مثل الفيروسات وبرامج الفدية. الحماية: تحديث النظام، مضاد فيروسات، عدم فتح مرفقات مجهولة.'}
+],q:{q:'ما هو التشفير؟',o:['حذف البيانات','تحويل البيانات لشكل غير مقروء إلا بالمفتاح','تسريع الإنترنت','إنشاء كلمة مرور'],a:1}},
+{id:5,t:'المستوى 5: الاختراق الأخلاقي',e:'Level 5: Ethical Hacking',lessons:[
+{img:'🔍',dia:'مراحل الاختراق الأخلاقي:\n1 جمع معلومات\n2 فحص\n3 تحليل ثغرات\n4 تقرير وإصلاح\n⚠️ فقط بإذن كتابي!',t:'منهجية اختبار الاختراق',c:'الاختراق الأخلاقي عمل قانوني له هدف واحد: إيجاد الثغرات قبل المجرمين وإصلاحها. يبدأ بجمع معلومات عامة، ثم فحص، ثم تحليل، ثم كتابة تقرير. بدون إذن كتابي من مالك النظام، أي اختبار يعتبر غير قانوني.'},
+{img:'🗺️',dia:'شبكتك الخاصة:\n192.168.1.1  الراوتر\n192.168.1.10 جهازك\n192.168.1.20 طابعة\nNmap يعرض الأجهزة والمنافذ في شبكتك',t:'Nmap دفاعياً',c:'Nmap أداة مشروعة لفحص شبكتك: تعرض الأجهزة المتصلة والمنافذ المفتوحة. استخدمها فقط على شبكتك أو مختبرك المعزول. مثال دفاعي: اكتشفت منفذاً مفتوحاً لا تحتاجه؟ أغلقه فوراً.'},
+{img:'📋',dia:'تقرير الاختراق الجيد:\n- وصف الثغرة\n- خطورتها\n- كيف تم اكتشافها\n- كيف تُصلَّح\nبدون تقرير = بدون إصلاح',t:'كتابة تقارير الاختراق',c:'أهم مهارة في الاختراق الأخلاقي ليست الاختراق نفسه، بل التقرير. الشركة لا تستفيد من ثغرة اكتشفتها ولم تشرحها بوضوح. التقرير الجيد يشرح الثغرة وخطورتها وطريقة إصلاحها خطوة بخطوة.'}
+],q:{q:'متى يكون اختبار الاختراق قانونياً؟',o:['دائماً','فقط بإذن كتابي من المالك','إذا كان الموقع مشهوراً','إذا لم يكتشفك أحد'],a:1}},
+{id:6,t:'المستوى 6: أمن تطبيقات الويب',e:'Level 6: Web Security',lessons:[
+{img:'🏆',dia:'OWASP Top 10 - أشهر المخاطر:\n1 الحقن Injection\n2 كسر المصادقة\n3 تسرب البيانات الحساسة\n4 XSS\n... والباقي في الدرس الكامل',t:'OWASP Top 10',c:'OWASP Top 10 قائمة بأخطر 10 مخاطر لتطبيقات الويب في العالم. كل مطور ومحلل أمن يجب أن يعرفها. أشهرها: الحقن، وكسر المصادقة، والبرمجة النصية عبر المواقع XSS.'},
+{img:'💉',dia:'هجوم (ممنوع تجربته):\nحقل اسم المستخدم ← " OR 1=1 --"\nالدفاع ✅:\nPrepared Statements\n+ التحقق من المدخلات',t:'SQL Injection دفاعياً',c:'SQL Injection: مهاجم يحقن أوامر قاعدة بيانات في حقل إدخال. الدفاع: استخدم Prepared Statements ولا تثق أبداً بمدخلات المستخدم. هذا الدرس دفاعي فقط: لا تجرب الحقن على أي موقع حقيقي.'},
+{img:'💬',dia:'XSS:\nمهاجم يضع كود JavaScript في تعليق\n↓\nزائر يرى التعليق → الكود يعمل في متصفحه\nالدفاع: ترميز المخرجات + CSP',t:'XSS و API Security',c:'XSS: حقن كود JavaScript خبيث في صفحة يراها الآخرون. الدفاع: ترميز المخرجات وسياسة أمن المحتوى CSP. أما API Security: كل واجهة برمجية يجب أن تتحقق من هوية المستخدم وصلاحياته قبل إعطاء أي بيانات.'}
+],q:{q:'أفضل دفاع ضد SQL Injection؟',o:['إخفاء الموقع','Prepared Statements','كلمة مرور قوية','تغيير الألوان'],a:1}},
+{id:7,t:'المستوى 7: SOC و Blue Team',e:'Level 7: SOC & Blue Team',lessons:[
+{img:'👁️',dia:'[ الأنظمة ] --> [ SIEM يجمع السجلات ] --> [ محلل SOC ]\nتنبيه! محاولات دخول فاشلة كثيرة\n→ يبدأ التحقيق',t:'أساسيات SOC',c:'مركز العمليات الأمنية SOC غرفة مراقبة رقمية: محللون يراقبون التنبيهات 24 ساعة ويستجيبون للحوادث. عملهم يشبه برج المراقبة في المطار: يرون كل شيء ويتدخلون عند الخطر.'},
+{img:'📊',dia:'سجل Log واحد:\n10:02 محاولة دخول فاشلة - IP غريب\n10:03 محاولة دخول فاشلة - نفس IP\n10:04 محاولة دخول فاشلة - نفس IP\n= هجوم تخمين كلمات مرور! 🚨',t:'SIEM وتحليل السجلات',c:'السجلات Logs تسجّل كل ما يحدث: من دخل، ومتى، ومن أي جهاز. SIEM يجمع هذه السجلات من كل الأنظمة ويبحث عن أنماط مشبوهة. مثال: 100 محاولة دخول فاشلة من نفس IP في دقيقة = هجوم واضح.'},
+{img:'🚨',dia:'الاستجابة للحوادث:\n1 احتواء → 2 إيقاف الهجوم\n3 إزالة الخطر → 4 استعادة النظام\n5 تقرير + دروس مستفادة',t:'Incident Response والتحليل الجنائي',c:'عند وقوع حادث: أولاً احتوِ الخطر حتى لا ينتشر، ثم أوقف الهجوم، ثم أزل البرمجيات الخبيثة، ثم أعد النظام للعمل، وأخيراً اكتب تقريراً. التحليل الجنائي الرقمي يجمع الأدلة لمعرفة كيف حدث الهجوم ومن أين بدأ.'}
+],q:{q:'ما وظيفة SIEM؟',o:['تصميم المواقع','جمع وتحليل السجلات لكشف الهجمات','تشفير الصور','إنشاء ألعاب'],a:1}},
+{id:8,t:'المستوى 8: الأمن المتقدم',e:'Level 8: Advanced',lessons:[
+{img:'☁️',dia:'السحابة:\n[ تطبيقك ]\n[ صلاحيات محدودة ✅ ]\n[ تشفير ✅ ]\n[ سجلات ومراقبة ✅ ]\nخطأ واحد في الإعداد = باب مفتوح ❌',t:'Cloud Security',c:'أمن السحابة: معظم الاختراقات السحابية سببها إعداد خاطئ وليس ثغرة معقدة. مثال: حاوية تخزين مفتوحة للجميع. القواعد: صلاحيات محدودة، تشفير، مراجعة الإعدادات، مراقبة مستمرة.'},
+{img:'🔴🔵',dia:'Red Team 🔴: يهاجم في مختبر مصرح به\nليكشف نقاط الضعف\nBlue Team 🔵: يدافع ويكتشف\nويستجيب للهجوم\nمعاً = دفاع أقوى',t:'Red Team و Blue Team',c:'Red Team فريق هجومي مصرح له يقلّد المهاجمين الحقيقيين في بيئة آمنة لاختبار الدفاعات. Blue Team فريق دفاعي يكتشف الهجوم ويستجيب. أفضل المؤسسات تجمعهما في تمرين واحد يسمى Purple Team.'},
+{img:'🦠',dia:'تحليل البرمجيات الخبيثة:\n1 في بيئة معزولة تماماً\n2 مراقبة ما يفعله الملف\n3 هل يسرق بيانات؟ هل يتصل بخادم غريب؟\n⚠️ لا تفتح ملفاً مشبوهاً على جهازك',t:'Malware Analysis',c:'تحليل البرمجيات الخبيثة يتم فقط في بيئة معزولة Sandbox، أبداً على جهازك. المحلل يراقب: ماذا يفعل الملف؟ هل ينشئ ملفات؟ هل يتصل بالإنترنت؟ الهدف: فهم الخطر وكيف نمنعه.'}
+],q:{q:'ما دور Blue Team؟',o:['الهجوم','الدفاع والكشف والاستجابة','كتابة الإعلانات','بيع الأجهزة'],a:1}},
 ];
 function render(){
 document.getElementById('xp1').textContent=S.xp;document.getElementById('dashXp').textContent=S.xp;document.getElementById('rankXp').textContent=S.xp;document.getElementById('dashDone').textContent=S.done.length;document.getElementById('adminXp').textContent=S.xp;document.getElementById('adminDone').textContent=S.done.length;
@@ -146,9 +190,10 @@ let cl=document.getElementById('courseList');cl.innerHTML='';
 COURSES.forEach(c=>{let d=document.createElement('div');d.className='card';d.innerHTML='<h3>'+c.t+'</h3><p class="muted">'+c.e+'</p>'+c.lessons.map((l,i)=>'<button class="sec" style="margin:3px" onclick="openLesson('+c.id+','+i+')">'+(S.done.includes(c.id+'-'+i)?'✅ ':'')+l.t+'</button>').join('')+'<br><button onclick="openQuiz('+c.id+')">📝 اختبار المستوى</button>';cl.appendChild(d);});
 document.getElementById('annList').innerHTML=S.ann.map(a=>'<div class="msg ai">'+a+'</div>').join('')||'<span class="muted">لا توجد إعلانات بعد</span>';
 }
-function openLesson(cid,li){let c=COURSES.find(x=>x.id===cid);let l=c.lessons[li];let box=document.getElementById('lessonBox');box.classList.remove('hidden');box.innerHTML='<h3>'+l.t+'</h3><p>'+l.c+'</p><button onclick="completeLesson('+cid+','+li+')">✅ إكمال الدرس +50 XP</button>';box.scrollIntoView();}
+function openLesson(cid,li){let c=COURSES.find(x=>x.id===cid);let l=c.lessons[li];let box=document.getElementById('lessonBox');box.classList.remove('hidden');document.getElementById('lessonContent').innerHTML='<div class="illus">'+(l.img||'📘')+'</div><h3>'+l.t+'</h3><div class="diagram">'+(l.dia||'')+'</div><p style="line-height:1.9">'+l.c+'</p><button onclick="completeLesson('+cid+','+li+');closeLesson();">✅ إكمال الدرس +50 XP</button>';window.scrollTo(0,0);}
+function closeLesson(){document.getElementById('lessonBox').classList.add('hidden');}
 function completeLesson(cid,li){let k=cid+'-'+li;if(!S.done.includes(k)){S.done.push(k);S.xp+=50;save();alert('أحسنت! +50 XP');}else alert('هذا الدرس مكتمل already ✅');}
-function openQuiz(cid){let c=COURSES.find(x=>x.id===cid);let box=document.getElementById('lessonBox');box.classList.remove('hidden');box.innerHTML='<h3>اختبار: '+c.t+'</h3><p>'+c.q.q+'</p>'+c.q.o.map((o,i)=>'<button class="sec" style="display:block;width:100%;margin:4px" onclick="checkQuiz('+cid+','+i+')">'+o+'</button>').join('');box.scrollIntoView();}
+function openQuiz(cid){let c=COURSES.find(x=>x.id===cid);let box=document.getElementById('lessonBox');box.classList.remove('hidden');document.getElementById('lessonContent').innerHTML='<h3>اختبار: '+c.t+'</h3><p>'+c.q.q+'</p>'+c.q.o.map((o,i)=>'<button class="sec" style="display:block;width:100%;margin:4px" onclick="checkQuiz('+cid+','+i+');closeLesson();">'+o+'</button>').join('');window.scrollTo(0,0);}
 function checkQuiz(cid,i){let c=COURSES.find(x=>x.id===cid);if(i===c.q.a){S.xp+=100;save();alert('إجابة صحيحة! +100 XP 🎉');}else alert('إجابة خاطئة، حاول مرة أخرى. تلميح: راجع درس هذا المستوى.');}
 function runTerm(){let v=document.getElementById('termIn').value.trim().toLowerCase();let out=document.getElementById('termOut');let r='';if(v==='help')r='الأوامر المتاحة: help, pwd, whoami, ls, cat notes.txt, echo hello';else if(v==='pwd')r='/home/cyberpath';else if(v==='whoami')r='cyberpath';else if(v==='ls')r='notes.txt  projects  labs';else if(v==='cat notes.txt')r='تذكير: لا تختبر إلا على أنظمتك الخاصة.';else if(v.startsWith('echo '))r=v.slice(5);else r='أمر غير معروف في المحاكاة. اكتب help';out.textContent+='\n$ '+v+'\n'+r;document.getElementById('termIn').value='';S.xp+=10;save();}
 function netLab(){document.getElementById('netOut').textContent='فحص تجريبي لـ '+document.getElementById('hostIn').value+'\n80/tcp  مفتوح (تجريبي)\n443/tcp مفتوح (تجريبي)\n22/tcp  مغلق (تجريبي)\nالنتيجة: هذا فحص محاكاة فقط.';S.xp+=20;save();}
@@ -159,6 +204,7 @@ function setPlan(p){S.plan=p;save();alert('تم اختيار خطة '+p+' (وض�
 function saveUser(){let n=document.getElementById('nameIn').value||'طالب';let e=document.getElementById('emailIn').value||'';S.name=n;if(e==='admin@cyberpath.academy')S.plan='PRO';save();document.getElementById('loginMsg').textContent='تم حفظ حسابك: '+n+' ✅ اذهب إلى لوحة الطالب.';go('dash');}
 function makeCert(){if(S.done.length<3){alert('أكمل 3 دروس على الأقل أولاً. أكملت: '+S.done.length);}else{document.getElementById('certBox').innerHTML='<div style="border:2px solid #a78bfa;padding:16px;border-radius:12px;text-align:center"><h2>🎓 شهادة إتمام</h2><p>تشهد CyberPath Academy أن</p><h3>'+S.name+'</h3><p>أكمل '+S.done.length+' دروساً في الأمن السيبراني</p><p>رقم التحقق: CP-'+(1000+S.xp)+'</p><p>'+new Date().toLocaleDateString('ar')+'</p></div>';}}
 function sendAnn(){let v=document.getElementById('annIn').value;if(!v)return;S.ann.push(v);save();document.getElementById('annOut').textContent='تم نشر الإعلان ✅';}
+document.getElementById('lessonBox').addEventListener('click',function(e){if(e.target.id==='lessonBox')closeLesson();});
 render();
 </script>
 </body>
