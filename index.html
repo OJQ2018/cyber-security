@@ -15,7 +15,7 @@ main{max-width:980px;margin:auto;padding:16px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
 input,select,textarea{width:100%;padding:11px;border-radius:10px;border:1px solid #334155;background:#020617;color:#fff;margin:6px 0}
 .badge{display:inline-block;background:#1e1b4b;color:#c4b5fd;padding:4px 10px;border-radius:20px;font-size:12px;margin:2px}
-.hidden{display:none}.pill{background:#111827;padding:8px 12px;border-radius:20px;border:1px solid #333}
+.hidden{display:none!important}.pill{background:#111827;padding:8px 12px;border-radius:20px;border:1px solid #333}
 .top{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .hero{background:linear-gradient(135deg,#4c1d95,#1d4ed8,#0ea5e9);border-radius:20px;padding:28px 20px}
 h1{font-size:32px;line-height:1.2;margin:8px 0}.muted{color:#cbd5e1}
@@ -23,7 +23,7 @@ h1{font-size:32px;line-height:1.2;margin:8px 0}.muted{color:#cbd5e1}
 .diagram{background:#020617;border:1px dashed #64748b;border-radius:12px;padding:12px;margin:10px 0;font-family:monospace;white-space:pre-wrap;text-align:center;line-height:1.7}
 .lesson-img{width:100%;border-radius:14px;display:block}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;display:flex;align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto}
-.modal-card{background:#0f172a;border:1px solid #a78bfa;border-radius:18px;padding:18px;max-width:720px;width:100%;margin-top:20px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.modal-card{background:#0f172a;border:2px solid #a78bfa;border-radius:18px;padding:18px;max-width:720px;width:100%;margin-top:20px;box-shadow:0 20px 60px rgba(0,0,0,.6);color:#eef2ff}
 .closebtn{float:left;background:#334155}
 .lab{background:#020617;border:1px solid #334155;border-radius:12px;padding:12px;font-family:monospace;white-space:pre-wrap;min-height:120px}
 .msg{padding:10px;border-radius:10px;margin:6px 0}.me{background:#312e81}.ai{background:#0f766e}
@@ -73,7 +73,6 @@ table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #334155;
 <h2>📚 الدورات والمسارات</h2>
 <p class="muted">اختر مستوى، افتح درساً، أجب عن الاختبار، وستُحفظ نتيجتك.</p>
 <div id="courseList"></div>
-<div id="lessonBox" class="modal hidden"><div class="modal-card"><button class="closebtn" onclick="closeLesson()">✖ إغلاق</button><div id="lessonContent"></div></div></div>
 </div>
 
 <div id="labs" class="page hidden">
@@ -190,10 +189,10 @@ let cl=document.getElementById('courseList');cl.innerHTML='';
 COURSES.forEach(c=>{let d=document.createElement('div');d.className='card';d.innerHTML='<h3>'+c.t+'</h3><p class="muted">'+c.e+'</p>'+c.lessons.map((l,i)=>'<button class="sec" style="margin:3px" onclick="openLesson('+c.id+','+i+')">'+(S.done.includes(c.id+'-'+i)?'✅ ':'')+l.t+'</button>').join('')+'<br><button onclick="openQuiz('+c.id+')">📝 اختبار المستوى</button>';cl.appendChild(d);});
 document.getElementById('annList').innerHTML=S.ann.map(a=>'<div class="msg ai">'+a+'</div>').join('')||'<span class="muted">لا توجد إعلانات بعد</span>';
 }
-function openLesson(cid,li){let c=COURSES.find(x=>x.id===cid);let l=c.lessons[li];let box=document.getElementById('lessonBox');box.classList.remove('hidden');document.getElementById('lessonContent').innerHTML='<div class="illus">'+(l.img||'📘')+'</div><h3>'+l.t+'</h3><div class="diagram">'+(l.dia||'')+'</div><p style="line-height:1.9">'+l.c+'</p><button onclick="completeLesson('+cid+','+li+');closeLesson();">✅ إكمال الدرس +50 XP</button>';window.scrollTo(0,0);}
+function openLesson(cid,li){let c=COURSES.find(x=>x.id===cid);let l=c?c.lessons[li]:null;let box=document.getElementById('lessonBox');let ct=document.getElementById('lessonContent');if(!l){ct.innerHTML='<h3>خطأ: الدرس غير موجود</h3><p>أعد تحميل الصفحة وحاول مجدداً.</p>';box.classList.remove('hidden');return;}let dia=(l.dia||'').replace(/\n/g,'<br>');ct.innerHTML='<div class="illus">'+(l.img||'📘')+'</div><h3>'+l.t+'</h3><div class="diagram">'+dia+'</div><p style="line-height:1.9">'+l.c+'</p><button onclick="completeLesson('+cid+','+li+');closeLesson();">✅ إكمال الدرس +50 XP</button>';box.classList.remove('hidden');}
 function closeLesson(){document.getElementById('lessonBox').classList.add('hidden');}
 function completeLesson(cid,li){let k=cid+'-'+li;if(!S.done.includes(k)){S.done.push(k);S.xp+=50;save();alert('أحسنت! +50 XP');}else alert('هذا الدرس مكتمل already ✅');}
-function openQuiz(cid){let c=COURSES.find(x=>x.id===cid);let box=document.getElementById('lessonBox');box.classList.remove('hidden');document.getElementById('lessonContent').innerHTML='<h3>اختبار: '+c.t+'</h3><p>'+c.q.q+'</p>'+c.q.o.map((o,i)=>'<button class="sec" style="display:block;width:100%;margin:4px" onclick="checkQuiz('+cid+','+i+');closeLesson();">'+o+'</button>').join('');window.scrollTo(0,0);}
+function openQuiz(cid){let c=COURSES.find(x=>x.id===cid);let box=document.getElementById('lessonBox');let ct=document.getElementById('lessonContent');ct.innerHTML='<h3>اختبار: '+c.t+'</h3><p>'+c.q.q+'</p>'+c.q.o.map((o,i)=>'<button class="sec" style="display:block;width:100%;margin:4px;text-align:start" onclick="checkQuiz('+cid+','+i+');closeLesson();">'+o+'</button>').join('');box.classList.remove('hidden');}
 function checkQuiz(cid,i){let c=COURSES.find(x=>x.id===cid);if(i===c.q.a){S.xp+=100;save();alert('إجابة صحيحة! +100 XP 🎉');}else alert('إجابة خاطئة، حاول مرة أخرى. تلميح: راجع درس هذا المستوى.');}
 function runTerm(){let v=document.getElementById('termIn').value.trim().toLowerCase();let out=document.getElementById('termOut');let r='';if(v==='help')r='الأوامر المتاحة: help, pwd, whoami, ls, cat notes.txt, echo hello';else if(v==='pwd')r='/home/cyberpath';else if(v==='whoami')r='cyberpath';else if(v==='ls')r='notes.txt  projects  labs';else if(v==='cat notes.txt')r='تذكير: لا تختبر إلا على أنظمتك الخاصة.';else if(v.startsWith('echo '))r=v.slice(5);else r='أمر غير معروف في المحاكاة. اكتب help';out.textContent+='\n$ '+v+'\n'+r;document.getElementById('termIn').value='';S.xp+=10;save();}
 function netLab(){document.getElementById('netOut').textContent='فحص تجريبي لـ '+document.getElementById('hostIn').value+'\n80/tcp  مفتوح (تجريبي)\n443/tcp مفتوح (تجريبي)\n22/tcp  مغلق (تجريبي)\nالنتيجة: هذا فحص محاكاة فقط.';S.xp+=20;save();}
@@ -207,5 +206,13 @@ function sendAnn(){let v=document.getElementById('annIn').value;if(!v)return;S.a
 document.getElementById('lessonBox').addEventListener('click',function(e){if(e.target.id==='lessonBox')closeLesson();});
 render();
 </script>
+
+<div id="lessonBox" class="modal hidden">
+  <div class="modal-card">
+    <button class="closebtn" onclick="closeLesson()">✖ إغلاق</button>
+    <div style="clear:both"></div>
+    <div id="lessonContent" style="min-height:200px"></div>
+  </div>
+</div>
 </body>
 </html>
